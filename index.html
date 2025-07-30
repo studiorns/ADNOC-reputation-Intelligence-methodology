@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Reputation Dashboard Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 71, 186, 0.1);
+        }
+
+        .slide {
+            min-height: 100vh;
+            padding: 60px 80px;
+            display: none;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide-header {
+            border-bottom: 3px solid #0047BA;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        .slide-number {
+            color: #0047BA;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .slide-title {
+            color: #0047BA;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .slide-subtitle {
+            color: #666;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        .content-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            color: #0047BA;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            fill: #0047BA;
+        }
+
+        .step-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .step-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            border-color: #0047BA;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 71, 186, 0.15);
+        }
+
+        .step-number {
+            background: #0047BA;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            color: #0047BA;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .step-description {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .metric-category {
+            background: #f8f9fa;
+            border-left: 4px solid #0047BA;
+            padding: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .metric-title {
+            color: #0047BA;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .metric-list {
+            list-style: none;
+        }
+
+        .metric-list li {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .metric-list li::before {
+            content: "•";
+            color: #0047BA;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .key-points {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .key-points h4 {
+            color: #0047BA;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .key-points ul {
+            list-style: none;
+        }
+
+        .key-points li {
+            color: #555;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .key-points li::before {
+            content: "✓";
+            color: #0047BA;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: #0047BA;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #003a9e;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator-dot.active {
+            background: #0047BA;
+            transform: scale(1.2);
+        }
+
+        .value-proposition {
+            background: #0047BA;
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .value-proposition h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .value-proposition p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 40px 30px;
+            }
+
+            .slide-title {
+                font-size: 24px;
+            }
+
+            .step-container {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navigation {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .slide-indicator {
+                bottom: 20px;
+                left: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .slide {
+                padding: 30px 20px;
+            }
+
+            .slide-title {
+                font-size: 20px;
+            }
+
+            .nav-btn {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Cover Slide -->
+        <div class="slide active">
+            <div style="text-align: center; padding-top: 15vh;">
+                <svg class="section-icon" style="width: 80px; height: 80px; margin-bottom: 30px;" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7V10C2 16 6 20.9 12 22C18 20.9 22 16 22 10V7L12 2Z"/>
+                </svg>
+                <h1 style="color: #0047BA; font-size: 42px; font-weight: 700; margin-bottom: 20px;">
+                    Corporate Reputation Intelligence Platform
+                </h1>
+                <p style="color: #666; font-size: 24px; margin-bottom: 40px;">
+                    Strategic Assessment Framework
+                </p>
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto;">
+                    <h3 style="color: #0047BA; margin-bottom: 20px;">Assessment Overview</h3>
+                    <p style="color: #555; font-size: 16px; line-height: 1.6;">
+                        Comprehensive 3-slide framework for designing and developing a bespoke corporate reputation dashboard 
+                        that integrates quantitative and qualitative metrics to enable holistic reputation tracking for leadership decision-making.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 1: Implementation Approach -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Slide 01</div>
+                <h2 class="slide-title">Strategic Foundation & Implementation Approach</h2>
+                <p class="slide-subtitle">Comprehensive Reputation Monitoring & Analysis Platform</p>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7V10C2 16 6 20.9 12 22C18 20.9 22 16 22 10V7L12 2Z"/>
+                    </svg>
+                    Clear Implementation Steps
+                </h3>
+                <div class="step-container">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Foundation & Requirements (Weeks 1-2)</div>
+                        <div class="step-description">
+                            Stakeholder interviews, data source audit, industry benchmarking, and KPI definition aligned with strategic objectives.
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Data Integration & Architecture (Weeks 3-4)</div>
+                        <div class="step-description">
+                            Platform integration, campaign system connection, feedback collection setup, and data warehouse design with ETL processes.
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Dashboard Development (Weeks 5-6)</div>
+                        <div class="step-description">
+                            Executive dashboard build using proven BI tools, role-based views, mobile interface, and intelligent alerting system.
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Testing & Deployment (Weeks 7-8)</div>
+                        <div class="step-description">
+                            User acceptance testing, team training, gradual rollout with feedback collection, and maintenance procedures.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1M12 7C13.11 7 14 7.89 14 9C14 10.11 13.11 11 12 11C10.89 11 10 10.11 10 9C10 7.89 10.89 7 12 7M16 15C16 16.66 14.66 18 13 18H11C9.34 18 8 16.66 8 15V14C8 13.45 8.45 13 9 13H15C15.55 13 16 13.45 16 14V15Z"/>
+                    </svg>
+                    Critical Requirements & Decisions
+                </h3>
+                <div class="metrics-grid">
+                    <div class="metric-category">
+                        <div class="metric-title">Critical Requirements</div>
+                        <ul class="metric-list">
+                            <li>Enterprise-grade security with UAE compliance standards</li>
+                            <li>Role-based permissions with comprehensive audit trails</li>
+                            <li>Mobile-responsive design for executive accessibility</li>
+                            <li>API integration capability for existing systems</li>
+                        </ul>
+                    </div>
+                    <div class="metric-category">
+                        <div class="metric-title">Strategic Decisions</div>
+                        <ul class="metric-list">
+                            <li>Hybrid approach leveraging enterprise BI tools</li>
+                            <li>8-week implementation with proven technologies</li>
+                            <li>Cross-functional team with specialized expertise</li>
+                            <li>Quality-focused data governance framework</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Data Sources & AI Framework -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Slide 02</div>
+                <h2 class="slide-title">Data Sources & AI-Powered Metrics Framework</h2>
+                <p class="slide-subtitle">Industry-Standard Reputation Measurement Approach</p>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M3 3V21H21V3H3M5 19V5H19V19H5M7 7V9H17V7H7M7 11V13H17V11H7M7 15V17H14V15H7Z"/>
+                    </svg>
+                    Comprehensive Metrics Integration
+                </h3>
+                <div class="metrics-grid">
+                    <div class="metric-category">
+                        <div class="metric-title">Media Analytics</div>
+                        <ul class="metric-list">
+                            <li>SOV vs. peers, sentiment by region</li>
+                            <li>Volume, reach, and share of voice tracking</li>
+                            <li>Source Platforms: Meltwater, Talkwalker, Sprinklr</li>
+                        </ul>
+                    </div>
+                    <div class="metric-category">
+                        <div class="metric-title">Campaign Performance</div>
+                        <ul class="metric-list">
+                            <li>ER, CTR, VTR, brand uplift</li>
+                            <li>Digital engagement and conversion metrics</li>
+                            <li>Source Platforms: Google CM360, GWI, Datorama</li>
+                        </ul>
+                    </div>
+                    <div class="metric-category">
+                        <div class="metric-title">Stakeholder Insights</div>
+                        <ul class="metric-list">
+                            <li>Trust scores, advocacy, conversion</li>
+                            <li>Stakeholder sentiment and engagement tracking</li>
+                            <li>Source Platforms: Surveys, interviews, IRM, CRM</li>
+                        </ul>
+                    </div>
+                    <div class="metric-category">
+                        <div class="metric-title">Perception Index</div>
+                        <ul class="metric-list">
+                            <li>Quarterly brand tracking, benchmarking</li>
+                            <li>Competitive positioning and reputation scoring</li>
+                            <li>Source Platforms: RepTrak, Brand Finance, IPSOS</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M3 13H11V3H3V13M3 21H11V15H3V21M13 21H21V11H13V21M13 3V9H21V3H13Z"/>
+                    </svg>
+                    Visualization Approach
+                </h3>
+                <div class="metrics-grid">
+                    <div class="metric-category">
+                        <div class="metric-title">Modular Views</div>
+                        <ul class="metric-list">
+                            <li>Global Reputation Overview</li>
+                            <li>Market-Specific Drilldowns (e.g., EU policymakers, NA investors)</li>
+                            <li>Strategic Pillar Alignment (e.g., ESG, Innovation, National Pride)</li>
+                        </ul>
+                    </div>
+                    <div class="metric-category">
+                        <div class="metric-title">Visualization Features</div>
+                        <ul class="metric-list">
+                            <li>Heatmaps, trend graphs, radar charts, trust index timelines</li>
+                            <li>Filters: market, audience, media tier, sentiment drivers</li>
+                            <li>Alerts for major sentiment shifts or trust score drops</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="value-proposition">
+                    <h3>Impact for Leadership</h3>
+                    <p>
+                        Enable executives to track real-time reputation progress against strategic goals, quickly identify emerging risk and opportunity zones, and ground communications, ESG, and investor strategies in robust intelligence for informed decision-making.
+                    </p>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2M21 9V7L15 1L9 7V9C9 10.1 9.9 11 11 11V16L7.5 15.5C6.7 15.4 6 16 6 16.8V18.2C6 19 6.7 19.6 7.5 19.5L16.5 19.5C17.3 19.6 18 19 18 18.2V16.8C18 16 17.3 15.4 16.5 15.5L13 16V11C14.1 11 15 10.1 15 9Z"/>
+                    </svg>
+                    AI Role & Strategic Applications
+                </h3>
+                <div class="key-points">
+                    <h4>Foundation AI Technologies</h4>
+                    <ul>
+                        <li>NLP for sentiment classification & topic detection with 85-90% accuracy</li>
+                        <li>24/7 automated media monitoring across global sources</li>
+                        <li>Multi-language processing capabilities</li>
+                        <li>Real-time data ingestion and processing infrastructure</li>
+                        <li>Machine learning models for content categorization and analysis</li>
+                    </ul>
+                </div>
+                <div class="key-points">
+                    <h4>Intelligent Analysis & Prediction</h4>
+                    <ul>
+                        <li>Predictive scoring for early signals of reputational risk identification</li>
+                        <li>Automated tag clustering for ESG, innovation, crisis, and strategic themes</li>
+                        <li>Stakeholder sentiment prediction with confidence scoring</li>
+                        <li>Cross-platform content correlation and impact assessment</li>
+                        <li>AI-driven risk scoring based on historical patterns and emerging trends</li>
+                    </ul>
+                </div>
+                <div class="key-points">
+                    <h4>Strategic Applications</h4>
+                    <ul>
+                        <li>Executive briefing automation with 15-minute crisis alert capability</li>
+                        <li>Pre-announcement impact assessment and stakeholder response prediction</li>
+                        <li>Competitive positioning analysis for strategic communications planning</li>
+                        <li>Partnership opportunity identification through reputation correlation</li>
+                        <li>Crisis response effectiveness measurement and recovery tracking</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Leadership Applications -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-number">Slide 03</div>
+                <h2 class="slide-title">Leadership Applications & Strategic Value</h2>
+                <p class="slide-subtitle">Practical Decision Support for Executive Leadership</p>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7V10C2 16 6 20.9 12 22C18 20.9 22 16 22 10V7L12 2M11 14L7.5 10.5L9 9L11 11L15 7L16.5 8.5L11 14Z"/>
+                    </svg>
+                    Executive Use Cases
+                </h3>
+                <div class="step-container">
+                    <div class="step-card">
+                        <div class="step-title">Executive Decision Support</div>
+                        <div class="step-description">
+                            Pre-announcement analysis, partnership assessment, crisis monitoring, and quarterly reputation health tracking aligned with business objectives.
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-title">Strategic Communications</div>
+                        <div class="step-description">
+                            Theme performance analytics, campaign planning intelligence, narrative gap analysis, and competitive messaging intelligence.
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-title">Crisis Management</div>
+                        <div class="step-description">
+                            Real-time impact tracking, response effectiveness analysis, narrative control measurement, and reputation recovery monitoring.
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-title">Stakeholder Engagement</div>
+                        <div class="step-description">
+                            Targeted messaging optimization, media relations intelligence, feedback monitoring, and engagement strategy adjustment.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="value-proposition">
+                <h3>Strategic Value Proposition</h3>
+                <p>
+                    Transform reputation monitoring from ad-hoc reporting to systematic intelligence to enable leadership with reliable, 
+                    timely data to support strategic communications, stakeholder engagement, and crisis response decisions through 
+                    proven business intelligence technologies.
+                </p>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">
+                    <svg class="section-icon" viewBox="0 0 24 24">
+                        <path d="M9 11H7V9H9V11M13 11H11V9H13V11M17 11H15V9H17V11M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M19 19H5V8H19V19Z"/>
+                    </svg>
+                    Implementation Success Metrics
+                </h3>
+                <div class="metrics-grid">
+                    <div class="metric-category">
+                        <div class="metric-title">Performance Indicators</div>
+                        <ul class="metric-list">
+                            <li>95%+ accuracy in media monitoring and sentiment classification</li>
+                            <li>80%+ regular usage by target user groups within 3 months</li>
+                            <li>Reduce reputation issue identification from days to hours</li>
+                            <li>90%+ usage in major communications decisions</li>
+                        </ul>
+                    </div>
+                    <div class="metric-category">
+                        <div class="metric-title">Strategic Outcomes</div>
+                        <ul class="metric-list">
+                            <li>30% reduction in manual monitoring and reporting time</li>
+                            <li>Enhanced crisis response with 15-minute alert capability</li>
+                            <li>Data-driven stakeholder engagement optimization</li>
+                            <li>Proactive narrative development and theme planning</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">Previous</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next</button>
+    </div>
+
+    <!-- Slide Indicators -->
+    <div class="slide-indicator">
+        <div class="indicator-dot active" onclick="currentSlide(1)"></div>
+        <div class="indicator-dot" onclick="currentSlide(2)"></div>
+        <div class="indicator-dot" onclick="currentSlide(3)"></div>
+        <div class="indicator-dot" onclick="currentSlide(4)"></div>
+    </div>
+
+    <script>
+        let slideIndex = 1;
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator-dot');
+
+        function showSlide(n) {
+            if (n > slides.length) { slideIndex = 1; }
+            if (n < 1) { slideIndex = slides.length; }
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
+            
+            slides[slideIndex - 1].classList.add('active');
+            indicators[slideIndex - 1].classList.add('active');
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = slideIndex === 1;
+            document.getElementById('nextBtn').disabled = slideIndex === slides.length;
+        }
+
+        function changeSlide(n) {
+            slideIndex += n;
+            showSlide(slideIndex);
+        }
+
+        function currentSlide(n) {
+            slideIndex = n;
+            showSlide(slideIndex);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) changeSlide(1);
+            if (touchEndX > touchStartX + 50) changeSlide(-1);
+        }
+
+        // Initialize
+        showSlide(slideIndex);
+    </script>
+</body>
+</html>
